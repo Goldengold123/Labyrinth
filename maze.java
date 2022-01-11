@@ -1,5 +1,6 @@
-import java.awt.*;
 import java.io.*;
+import java.util.*;
+import java.awt.*;
 import hsa.Console;
 
 public class maze {
@@ -25,7 +26,22 @@ public class maze {
 	    {"4a", "4b", "4c", "4d", "4e"},
 	    {"5a", "5b", "5c", "5d", "5e"}
 	};
-
+    
+    // Method for reading a text file by line and returning it as an array.
+    public static String[] readTextFileByLine(String fileName) throws IOException {
+	String[] inputArray = new String[10];
+	String line;
+	BufferedReader input;
+	int idx = 0;
+	input = new BufferedReader(new FileReader(fileName));
+	line = input.readLine();
+	while (line != null)
+	    {
+		inputArray[idx] = line;
+	    }
+	return inputArray;
+    }
+    
     // Method for clearing a specific line (print spaces on a line)
     public static void clearLine(int lineNum) {
 	c.setCursor(lineNum, 0);
@@ -46,6 +62,27 @@ public class maze {
 	}
     }
     
+    // Method for getting input from the user (with invalid input check).
+    public static int getCheckInput(String prompt, boolean[] allowed) {
+	int input, currentRow, allowedNum;
+	c.print(prompt);
+	input = c.readInt();
+	while (Arrays.binarySearch(allowed, input) <= 0)
+	    {
+		c.setTextColor(Color.red);
+		c.print(" INVALID! ");
+		c.setTextColor(Color.black);
+		c.print("Press a key to try again: ");
+		c.getChar();
+		currentRow = c.getRow();
+		clearLine(currentRow);
+		c.setCursor(currentRow, 1);
+		c.print(prompt);
+		input = c.readInt();
+	    }
+	return input;
+    }
+    
     public static void main (String[] args) {
 	c = new Console(WINDOW_HEIGHT, WINDOW_WIDTH, FONT_SIZE, TITLE);
 	boolean adj[][] = {{false, false, false, false, false}, {false, true, true, false, false}, {true, false, false, true, true}, {true, false, false, true, false}, {false, true, true, false, false}, {false, true, false, false, false}};
@@ -59,7 +96,7 @@ public class maze {
 	    }
 	    c.println();
 	    c.print("Enter the room number you want to go to: ");
-	    curr = c.readInt();
+	    curr = getCheckInput("Enter the room number you want to go to: ", adjRooms);
 	    c.println();
 	    c.print("You are now in room " + curr);
 	    AtNode(curr);
