@@ -67,16 +67,17 @@ public class maze {
 	int input, currentRow, allowedNum;
 	c.print(prompt);
 	input = c.readInt();
-	while (Arrays.binarySearch(allowed, input) <= 0)
+	while (!allowed[input-1])
 	    {
 		c.setTextColor(Color.red);
-		c.print(" INVALID! ");
+		c.print("INVALID! ");
 		c.setTextColor(Color.black);
 		c.print("Press a key to try again: ");
 		c.getChar();
 		currentRow = c.getRow();
 		clearLine(currentRow);
-		c.setCursor(currentRow, 1);
+		clearLine(currentRow-1);
+		c.setCursor(currentRow-1, 1);
 		c.print(prompt);
 		input = c.readInt();
 	    }
@@ -95,7 +96,6 @@ public class maze {
 		if (room) c.print(i+1 + " ");
 	    }
 	    c.println();
-	    c.print("Enter the room number you want to go to: ");
 	    curr = getCheckInput("Enter the room number you want to go to: ", adjRooms);
 	    c.println();
 	    c.print("You are now in room " + curr);
