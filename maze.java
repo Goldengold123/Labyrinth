@@ -17,15 +17,10 @@ public class maze {
     // Array for the text to display at each node.
     // This array contains arrays of text, where the text is what is to be displayed at that node.
     // Upon arriving at a node, the program will not display all the text at once, as that would be too much for the user to handle. Instead, it will display a smaller amount of text and move on when the user presses a key.
-    static String text[][] =
-	{
-	    {""},
-	    {"1a", "1b", "1c", "1d", "1e"},
-	    {"2a", "2b", "2c", "2d", "2e"},
-	    {"3a", "3b", "3c", "3d", "3e"},
-	    {"4a", "4b", "4c", "4d", "4e"},
-	    {"5a", "5b", "5c", "5d", "5e"}
-	};
+    static String text[][];
+    
+    // Adjacency array containing boolean values that state whether 2 nodes are adjacent or not.
+    static boolean adj[][];
     
     // Method for reading a text file by line and returning it as an array.
     public static String[] readTextFileByLine(String fileName) throws IOException {
@@ -42,6 +37,49 @@ public class maze {
 	return inputArray;
     }
     
+    // Method for creating the border pattern
+    public static void clearScreenWithBorderPattern() {
+	c.clear();
+	c.setTextColor(Color.black);
+	int column = 0;
+	int row = 472;
+	
+	//Width of one pattern: 32
+	//Height of one pattern: 28
+	while (column < 640)
+	    {
+		c.fillRect(column,0,4,28);
+		c.fillRect(column,0,28,4);
+		c.fillRect(column,row,4,28);
+		c.fillRect(column,row,28,4);
+		
+		column += 8;
+		
+		c.fillRect(column,8,4,20);
+		c.fillRect(column,8,12,4);
+		c.fillRect(column,24,28,4);
+		c.fillRect(column,row + 8,4,20);
+		c.fillRect(column,row +8,12,4);
+		c.fillRect(column,row + 24,28,4);
+		
+		column += 8;
+		
+		c.fillRect(column,8,4,12);
+		c.fillRect(column,16,12,4);
+		c.fillRect(column,row + 8,4,12);
+		c.fillRect(column,row + 16,12,4);
+		
+		column += 8;
+
+		c.fillRect(column,0,4,20);
+		c.fillRect(column,row,4,20);
+
+		column += 8;
+	    }
+	    
+	c.setCursor(3,1);
+    }
+    
     // Method for clearing a specific line (print spaces on a line)
     public static void clearLine(int lineNum) {
 	c.setCursor(lineNum, 0);
@@ -49,25 +87,25 @@ public class maze {
 	for (int i=0; i<WINDOW_WIDTH; i++) c.print(" ");
     }
     
-    
     // Method for displaying the text when the user is at node n.
     public static void AtNode(int n) {
-	for (int i=0; i<text[n].length; i++)
-	{
-	    clearLine(5);
-	    c.setCursor(5, 5);
-	    c.println(text[n-1][i]);
-	    c.println("Press a key to continue: ");
-	    c.getChar();
-	}
+	c.setTextColor(Color.black);
+	for (int i=1; i<text[n].length-1; i++)
+	    {
+		clearScreenWithBorderPattern();
+		c.println(text[n][i]);
+		c.print("\nPress a key to continue: ");
+		c.getChar();
+	    }
     }
     
     // Method for getting input from the user (with invalid input check).
     public static int getCheckInput(String prompt, boolean[] allowed) {
 	int input, currentRow, allowedNum;
+	c.setTextColor(Color.blue);
 	c.print(prompt);
 	input = c.readInt();
-	while (!allowed[input-1])
+	while (!allowed[input])
 	    {
 		c.setTextColor(Color.red);
 		c.print("INVALID! ");
@@ -84,23 +122,34 @@ public class maze {
 	return input;
     }
     
-    public static void main (String[] args) {
+    public static void initialize() {
 	c = new Console(WINDOW_HEIGHT, WINDOW_WIDTH, FONT_SIZE, TITLE);
-	boolean adj[][] = {{false, false, false, false, false}, {false, true, true, false, false}, {true, false, false, true, true}, {true, false, false, true, false}, {false, true, true, false, false}, {false, true, false, false, false}};
-	int curr = 1;
-	while (curr != 5) {
+	initializeVariables variables = new initializeVariables();
+	text = variables.globText;
+	adj = variables.globAdj;
+    }
+    
+    public static void main (String[] args) {
+	initialize();
+	int curr = 0;
+	while (curr != 23) {
 	    boolean[] adjRooms = adj[curr];
-	    c.print("You can go to rooms ");
-	    for (int i=0; i<5; i++) {
-		boolean room = adjRooms[i];
-		if (room) c.print(i+1 + " ");
-	    }
-	    c.println();
-	    curr = getCheckInput("Enter the room number you want to go to: ", adjRooms);
-	    c.println();
-	    c.print("You are now in room " + curr);
+	    clearScreenWithBorderPattern();
+	    c.println("You are now in room " + curr + ".");
+	    c.print("\nPress a key to continue: ");
+	    c.getChar();
 	    AtNode(curr);
-	    c.clear();
+	    if (text[curr][0] == "WAIT")
+		{
+		    clearScreenWithBorderPattern();
+		    curr = getCheckInput(text[curr][text[curr].length-1], adjRooms);
+		}
+	    else if (text[curr][0] == "END")
+		{
+		    c.setTextColor(Color.red);
+		    c.print("\n\nTHE END");
+		    break;
+		 }
 	}
     }
 }
