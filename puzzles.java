@@ -33,20 +33,32 @@ public class puzzles {
 	c = new Console(height, width, fontSize, title);
     }
     
-    public static void puzzle14() {
+    public static void puzzle(int p) {
 	WINDOW_HEIGHT = 10;
 	WINDOW_WIDTH = 41;
 	FONT_SIZE = 14;
 	TITLE = "Puzzle";
 	newConsole(WINDOW_HEIGHT, WINDOW_WIDTH, FONT_SIZE, TITLE);
-	answerPuzzle(13, "If it takes 13 beasts 13 minutes to kill 13 mortals, how many beasts are required to kill 65 mortals in 65 minutes? ");
-	c.setTextColor(Color.green);
-	c.print("Correct! Press a key to try again: ");
-	c.getChar();
-	c.close();
-    }
-    
-    public static void main (String[] args) {
-	puzzle14();
+	
+	if (p == 6)
+	    {
+		answerPuzzle(13, "If it takes 13 beasts 13 minutes to kill 13 mortals, how many beasts are required to kill 65 mortals in 65 minutes? ");
+		c.setTextColor(Color.green);
+		c.print("Correct! Press a key to continue: ");
+		c.getChar();
+		c.close();
+	    }
+	else if (p == 11)
+	    {
+		answerPuzzle(9, "10 hours ago, a certain bacteria entered your body. The quantity of this bacteria doubles every hour. How many hours ago   was the number of bacteria half of the   amount currently in your body? ");
+		c.setTextColor(Color.green);
+		c.print("Correct! Press a key to continue: ");
+		c.getChar();
+		c.close();
+	    }
+	else
+	    {
+		c.println("!!!ERROR!!! PUZZLE !!!ERROR!!!");
+	    }
     }
 }

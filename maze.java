@@ -21,22 +21,7 @@ public class maze {
     
     // Adjacency array containing boolean values that state whether 2 nodes are adjacent or not.
     static boolean adj[][];
-    
-    // Method for reading a text file by line and returning it as an array.
-    public static String[] readTextFileByLine(String fileName) throws IOException {
-	String[] inputArray = new String[10];
-	String line;
-	BufferedReader input;
-	int idx = 0;
-	input = new BufferedReader(new FileReader(fileName));
-	line = input.readLine();
-	while (line != null)
-	    {
-		inputArray[idx] = line;
-	    }
-	return inputArray;
-    }
-    
+	
     // Method for creating the border pattern
     public static void clearScreenWithBorderPattern() {
 	c.clear();
@@ -89,13 +74,23 @@ public class maze {
     
     // Method for displaying the text when the user is at node n.
     public static void AtNode(int n) {
+	String currentTextToDisplay;
 	c.setTextColor(Color.black);
 	for (int i=1; i<text[n].length-1; i++)
 	    {
 		clearScreenWithBorderPattern();
-		c.println(text[n][i]);
-		c.print("\nPress a key to continue: ");
-		c.getChar();
+		currentTextToDisplay = text[n][i];
+		if (currentTextToDisplay == "PUZZLE")
+		    {
+			puzzles puzzle = new puzzles();
+			puzzle.puzzle(n);
+		    }
+		else
+		    {
+			c.println(text[n][i]);
+			c.print("\nPress a key to continue: ");
+			c.getChar();
+		    }
 	    }
     }
     
@@ -129,10 +124,16 @@ public class maze {
 	adj = variables.globAdj;
     }
     
+    public static void menu() {
+	menuClass menu = new menuClass();
+	menu.menu(c);
+    }
+    
     public static void main (String[] args) {
 	initialize();
+	menu();
 	int curr = 0;
-	while (curr != 23) {
+	while (true) {
 	    boolean[] adjRooms = adj[curr];
 	    clearScreenWithBorderPattern();
 	    c.println("You are now in room " + curr + ".");
@@ -144,12 +145,18 @@ public class maze {
 		    clearScreenWithBorderPattern();
 		    curr = getCheckInput(text[curr][text[curr].length-1], adjRooms);
 		}
+	    else if (curr == 23)
+		{
+		    c.setTextColor(Color.green);
+		    c.print("\n\nTHE END");
+		    break;
+		}
 	    else if (text[curr][0] == "END")
 		{
 		    c.setTextColor(Color.red);
 		    c.print("\n\nTHE END");
 		    break;
-		 }
+		}
 	}
     }
 }
