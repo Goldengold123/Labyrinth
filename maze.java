@@ -16,7 +16,7 @@ public class maze {
     
     // Array for the text to display at each node.
     // This array contains arrays of text, where the text is what is to be displayed at that node.
-    // Upon arriving at a node, the program will not display all the text at once, as that would be too much for the user to handle. Instead, it will display a smaller amount of text and move on when the user presses a key.
+    // Upon arriving at a node, the program will not display all the text at once, as that would be too much for the console to hold. Instead, it will display a smaller amount of text and move on when the user presses a key.
     static String text[][];
     
     // Adjacency array containing boolean values that state whether 2 nodes are adjacent or not.
