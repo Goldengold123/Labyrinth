@@ -28,7 +28,7 @@ public class maze {
     // The contents of this array will be inserted through another method in another java file below, for organization purposes.
     static String text[][];
     
-    // Adjacency array containing boolean values that state whether 2 nodes are adjacent or not.
+    // Adjacency array (matrix) containing boolean values that state whether 2 nodes are adjacent or not.
     // The contents of this array will be inserted through another method in another java file below, for organization purposes.
     static boolean adj[][];
     
@@ -117,91 +117,123 @@ public class maze {
     // Method for getting input from the user (with invalid input check).
     // Main purpose is for checking if the users input of move is valid.
     public static int getCheckInput(String prompt, boolean[] allowed) {
+	// Variable Declaration Section
 	int input, currentRow, allowedNum;
+	
+	// Input Section
+	// Prompt the user for which room they want to travel to.
 	c.setTextColor(Color.blue);
 	c.println(prompt);
 	c.setTextColor(Color.green);
 	input = c.readInt();
-	while (!allowed[input])
+	
+	// Input and Processing Section
+	// Check if the input is valid: if so, return the input value; otherwise display an error message and prompt the user again.
+	while (!allowed[input]) // check if input is valid (if the number is in the adjacency array of the current node)
 	    {
+		// if invalid, display an error message
 		c.setTextColor(Color.red);
 		c.print("INVALID! ");
 		c.setTextColor(Color.black);
 		c.print("Press a key to try again: ");
 		c.getChar();
+		
+		// clear error messages before asking again
 		currentRow = c.getRow();
 		clearLine(currentRow);
 		clearLine(currentRow-1);
 		c.setCursor(currentRow-1, 1);
+		
+		// Input Section
+		// Prompt the user for which room they want to travel to.
 		c.setTextColor(Color.green);
 		input = c.readInt();
 	    }
+	
+	// return the input value
 	return input;
     }
     
+    // Method for initializing the game.
+    // Creates the game console and assign the values for the text array and the adjacency array.
     public static void initialize() {
+	// Create the game console
 	c = new Console(WINDOW_HEIGHT, WINDOW_WIDTH, FONT_SIZE, TITLE);
+	
+	// Assign the values for the text array and adjacency array using the variables from the initializeVariables class.
+	// This was put into another java file for organizational purposes.
 	initializeVariables variables = new initializeVariables();
 	text = variables.globText;
 	adj = variables.globAdj;
     }
     
+    // Method for the menu of the game.
+    // Calls upon the menu method in the menuClass java file.
+    // This was put into another java file for organizational purposes.
     public static void menu() {
 	menuClass menu = new menuClass();
 	menu.menu(c);
     }
     
+    // Method for the end screen of the game.
+    // Calls upon the endScreen method in the endScreenClass java file.
+    // This was put into another java file for organizational purposes.
     public static void endScreen() {
 	endScreenClass endScreen = new endScreenClass();
 	input = endScreen.endScreen(c);
 	if (input == '1') runGame();
     }
     
+    // Method for running the overall game
     public static void runGame() {
 	// Variable Declaration Section
-	int curr = 0;
-	boolean win = false;
-	boolean lose = false;
+	int curr = 0; // current room
+	boolean endGame = false; // should we end the game?
 	
-	initialize();
+	// Processing Section
+	// Runs the menu method.
 	menu();
-
-	while ((!win) || (!lose))
+	
+	// Processing Section
+	// Main portion of the game
+	while (!endGame)
 	    {
-		boolean[] adjRooms = adj[curr];
+		boolean[] adjRooms = adj[curr]; // adjacency list for the current room
+		
 		clearScreenWithBorderPattern();
-		c.println("You are now in room " + curr + ".");
+		
+		// Information message
+		c.println("You are now in room " + curr + "."); 
 		c.print("\nPress a key to continue: ");
 		c.getChar();
+		
+		// Calls on the AtNode method since the user is at node curr.
 		AtNode(curr);
-		if (text[curr][0] == "WAIT")
+		
+		// Check for what to do at the current node (wait for input, or end the game)
+		if (text[curr][0] == "WAIT") // wait for input
 		    {
 			clearScreenWithBorderPattern();
 			curr = getCheckInput(text[curr][text[curr].length-1], adjRooms);
 		    }
-		else if (curr == 23)
+		else // end the game
 		    {
-			win = true;
-			c.setTextColor(Color.green);
-			c.print("\n\nTHE END");
-			c.setTextColor(Color.black);
-			c.print("\n\nPress a key to continue: ");
-			c.getChar();
-		    }
-		else if (text[curr][0] == "END")
-		    {
-			lose = true;
-			c.setTextColor(Color.red);
+			endGame = true;
+			c.setTextColor(Color.blue);
 			c.print("\n\nTHE END");
 			c.setTextColor(Color.black);
 			c.print("\n\nPress a key to continue: ");
 			c.getChar();
 		    }
 	    }
+	
+	// Call on the endScreen method, as the game is now over.
 	endScreen();
     }
     
+    // Main method
     public static void main (String[] args) {
-	runGame();
+	initialize(); // initialize the game
+	runGame(); // run the game!
     }
 }
